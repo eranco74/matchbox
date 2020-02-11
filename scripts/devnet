@@ -82,10 +82,13 @@ function docker_create {
     DATA_MOUNT="-v $PWD/examples:/var/lib/matchbox:Z -v $DIR/../examples/groups/$EXAMPLE:/var/lib/matchbox/groups:Z"
   fi
   
+  echo "Creating br0 bridge network"
+  docker network create --driver=bridge --subnet=172.168.0.0/16 br0
   docker run --name matchbox \
     -d \
     -p 8080:8080 \
     -p 8081:8081 \
+    --net=br0 \
     -v $CONFIG_DIR:/etc/matchbox:Z \
     -v $ASSETS_DIR:/var/lib/matchbox/assets:Z \
     $DATA_MOUNT \
@@ -95,7 +98,8 @@ function docker_create {
   docker run --name dnsmasq \
     -d \
     --cap-add=NET_ADMIN \
-    -v $PWD/contrib/dnsmasq/docker0.conf:/etc/dnsmasq.conf:Z \
+    --net=br0 \
+    -v $PWD/contrib/dnsmasq/br0.conf:/etc/dnsmasq.conf:Z \
     quay.io/poseidon/dnsmasq:f4623c508ff3fbc467285de1ede61126624b91ac -d
 }
 
@@ -109,6 +113,7 @@ function docker_destroy {
   docker stop dnsmasq
   docker rm matchbox
   docker rm dnsmasq
+  docker network rm br0
 }
 
 main $@
