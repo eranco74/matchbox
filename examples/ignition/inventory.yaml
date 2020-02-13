@@ -1,0 +1,31 @@
+---
+systemd:
+  units:
+    - name: inventory.service
+      enable: true
+      contents: |
+        [Unit]
+        Description=inventory service
+        Requires=docker.service
+
+        [Service]
+        ExecStart=/usr/bin/docker run --hostname {{.hostname}} --net=host quay.io/eranco/machine:latest
+        [Install]
+        WantedBy=multi-user.target
+    - name: docker.service
+      enable: true
+      dropins:
+      - name: enable_and_Start_docker.conf
+        contents: |
+          [Install]
+          WantedBy=multi-user.target
+
+{{ if index . "ssh_authorized_keys" }}
+passwd:
+  users:
+    - name: core
+      ssh_authorized_keys:
+        {{ range $element := .ssh_authorized_keys }}
+        - {{$element}}
+        {{end}}
+{{end}}

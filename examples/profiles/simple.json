@@ -15,5 +15,5 @@
       "coreos.autologin"
     ]
   },
-  "ignition_id": "ssh.yaml"
+  "ignition_id": "inventory.yaml"
 }

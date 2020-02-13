@@ -1,0 +1,11 @@
+{
+  "id": "node1",
+  "name": "Node 1",
+  "profile": "simple",
+  "selector": {
+    "mac": "52:54:00:a1:9c:ae"
+  },
+  "metadata": {
+    "hostname": "node1.redhat.com"
+  }
+}
